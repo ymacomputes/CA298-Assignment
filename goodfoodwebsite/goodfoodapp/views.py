@@ -21,6 +21,14 @@ def all_products(request):
 
 def singleproduct(request, prodid):
     prod = get_object_or_404(Product, pk=prodid)
-    return render(request, 'single_product.html', {'product':prod})
+    return render(request, 'single_product.html', {'product': prod})
 
 def myform(request):
+    if request.method == 'POST':
+        form = ProductForm(request.POST)
+        if form.is_valid():
+            new_product = form.save()
+            return render(request, 'single_product.html', {'product': new_product})
+    else:
+        form = ProductForm()
+        return render(request, 'form.html', {'form': form})
