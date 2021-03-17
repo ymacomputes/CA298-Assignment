@@ -121,3 +121,6 @@ USE_TZ = True
 STATIC_URL = '/static/'
 
 AUTH_USER_MODEL = "goodfoodapp.CaUser"
+
+LOGIN_URL = "/login/"
+LOGIN_REDIRECT_URL = "/"
