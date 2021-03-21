@@ -1,13 +1,11 @@
 {% extends "base.html" %}
 
-{% block title %}All Products{% endblock %}
+{% block title %}Admin Login{% endblock %}
 
 {% block content %}
-    {% for p in products %}
-        <div>
-            Name {{ p.name }} <br/>
-            Description {{ p.description }} <br/>
-            Price {{ p.price }}
-        </div>
-    {% endfor %}
+    <form action="." method="post">
+        {% csrf_token %}
+        {{ form.as_table }}
+        <input type="submit" value="Submit">
+    </form>
 {% endblock %}

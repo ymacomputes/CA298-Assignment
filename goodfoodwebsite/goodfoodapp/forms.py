@@ -5,7 +5,6 @@ from django.db import transaction
 from django import forms
 
 
-
 class ProductForm(ModelForm):
     class Meta:
         model = Product
@@ -39,5 +38,7 @@ class AdminSignupForm(UserCreationForm):
 class UserLoginForm(AuthenticationForm):
     def __init__(self, *args, **kwargs):
         super(UserLoginForm, self).__init__(*args, **kwargs)
+
     username = forms.TextInput(attrs={'class': 'form-control', 'placeholder': '', 'id': 'hello'})
-    password = forms.CharField(widget=forms.PasswordInput(attrs={'class': 'form-control', 'placeholder': '', 'id': 'hello'}))
+    password = forms.CharField(
+        widget=forms.PasswordInput(attrs={'class': 'form-control', 'placeholder': '', 'id': 'hello'}))
