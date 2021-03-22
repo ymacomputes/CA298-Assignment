@@ -1,0 +1,36 @@
+{% extends "base.html" %}
+
+{% block title %}
+    Order complete
+{% endblock %}
+
+{% block content %}
+        <table>
+            <thead>
+                <tr>
+                    <td>Item</td>
+                    <td>Price</td>
+                    <td>Quantity</td>
+                    <td>Total</td>
+                    <td></td>
+                </tr>
+            </thead>
+            <tbody>
+                {% for i in items %}
+                    <tr>
+                        <td>{{ i.product.name }}</td>
+                        <td>{{ i.product.price }}</td>
+                        <td>{{ i.quantity }}</td>
+                        <td>{{ i.price }}</td>
+                        <td><a href="{% url 'remove_basket' sbi=i.id %}"</td>
+                    </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    <p>Total price {{ basket.price }}</p>
+    <form action="." method="POST">
+    {% csrf_token %}
+    {{ form.as_table }}
+    <input type="submit" value="Submit">
+    </form>
+{% endblock %}

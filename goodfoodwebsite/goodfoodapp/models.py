@@ -25,17 +25,13 @@ class ShoppingBasketItems(models.Model):
     product = models.ForeignKey(Product, on_delete=models.CASCADE)
     quantity = models.IntegerField(default=1)
 
-class Order(models.Model):
-    id = models.AutoField(primary_key=True)
-    user_id = models.OneToOneField(CaUser, on_delete=models.CASCADE)
-    date_created = models.DateField(auto_now_add=True)
-    shipping_addr = models.CharField(max_length=500)
-
 
 class Order(models.Model):
     id = models.AutoField(primary_key=True)
     user_id = models.OneToOneField(CaUser, on_delete=models.CASCADE)
     date_created = models.DateField(auto_now_add=True)
+    fname = models.CharField(max_length=100)
+    lname = models.CharField(max_length=100)
     shipping_addr = models.CharField(max_length=500)
 
 
