@@ -1,13 +1,30 @@
 {% extends "base.html" %}
 
-{% block title %}Basket{% endblock %}
+{% block title %}
+    Order form
+{% endblock %}
 
 {% block content %}
-    {% for p in products %}
-        <div>
-            Name {{ p.name }} <br/>
-            Description {{ p.description }} <br/>
-            Price {{ p.price }}
-        </div>
-    {% endfor %}
+        <table>
+            <thead>
+                <tr>
+                    <td>Item</td>
+                    <td>Price</td>
+                    <td>Quantity</td>
+                    <td>Total</td>
+                    <td></td>
+                </tr>
+            </thead>
+            <tbody>
+                {% for i in items %}
+                    <tr>
+                        <td>{{ i.product.name }}</td>
+                        <td>{{ i.product.price }}</td>
+                        <td>{{ i.quantity }}</td>
+                        <td>{{ i.price }}</td>
+                    </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    <p><a href="/orderform">Order</p>
 {% endblock %}

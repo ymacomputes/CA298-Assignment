@@ -50,8 +50,6 @@ class UserLoginForm(AuthenticationForm):
 
 class OrderForm(ModelForm):
     shipping_addr = forms.CharField(label="Shipping Address")
-    fname = forms.CharField(label="First Name")
-    lname = forms.CharField(label="Last Name")
     class Meta:
         model = Order
-        fields = ['fname', 'lname', 'shipping_addr']
+        fields = ['shipping_addr']

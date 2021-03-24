@@ -36,8 +36,6 @@ class Order(models.Model):
     id = models.AutoField(primary_key=True)
     user_id = models.OneToOneField(CaUser, on_delete=models.CASCADE)
     date_created = models.DateField(auto_now_add=True)
-    fname = models.CharField(max_length=100)
-    lname = models.CharField(max_length=100)
     shipping_addr = models.CharField(max_length=500)
 
 

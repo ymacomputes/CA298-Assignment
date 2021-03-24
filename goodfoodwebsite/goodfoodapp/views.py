@@ -125,12 +125,12 @@ def order_form(request):
             order = form.save(commit=False)
             order.user_id = request.user
             order.save()
-            order_items = []
-            for basketitem in sbi:
-                order_item = OrderItems(order_id=order, product_id=basketitem.product, quantity=basketitem.quantity)
-                order_items.append(order_item)
-            shopping_basket.delete()
-            return render(request, 'ordercomplete.html', {'order': order, 'items': order_items})
+        order_items = []
+        for basketitem in sbi:
+            order_item = OrderItems(order_id=order, product_id=basketitem.product, quantity=basketitem.quantity)
+            order_items.append(order_item)
+        shopping_basket.delete()
+        return render(request, 'ordercomplete.html', {'order': order, 'items': order_items})
     else:
         form = OrderForm()
         return render(request, 'orderform.html', {'form': form, 'basket': shopping_basket, 'items': sbi})
