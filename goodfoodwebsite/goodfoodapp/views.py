@@ -102,7 +102,7 @@ def get_basket(request):
     if not shopping_basket:
         shopping_basket = ShoppingBasket(user_id=user).save()
     sbi = ShoppingBasketItems.objects.filter(basket_id=shopping_basket.id)
-    return render(request, 'shopping_basket.html', {'basket': shopping_basket, 'items': sbi})
+    return render(request, 'basket.html', {'basket': shopping_basket, 'items': sbi})
 
 
 @login_required
