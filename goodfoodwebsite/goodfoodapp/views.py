@@ -44,7 +44,7 @@ def myform(request):
 
 class CaUserSignupView(CreateView):
     model = CaUser
-    from_class = CASignupForm
+    form_class = CASignupForm
     template_name = 'causer_signup.html'
 
     def get_context_data(self, **kwargs):
