@@ -5,7 +5,7 @@
 {% block content %}
     {% for p in products %}
         <div>
-            Name {{ p.name }} <br/>
+            Name <a href="/product/{{ p.id }}">{{ p.name }}</a> <br/>
             Description {{ p.description }} <br/>
             Price {{ p.price }}
         </div>
