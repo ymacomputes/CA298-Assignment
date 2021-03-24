@@ -1,7 +1,15 @@
 {% extends "base.html" %}
-
+{% load static %}
 {% block title %}My homepage{% endblock %}
 
 {% block content %}
+    {% if user.is_authenticated %}
+        <h1> Hello {{ user.username }}</h1>
+        <a href="/logout">Logout - {{ user.username }}</a>
+    {% else %}
+        <a href="/login">Login</a>
+    {% endif %}
 
+    <p>Hello, Welcome to Good Food</p>
+    <img src="{% static '/img/#' %}" />
 {% endblock %}

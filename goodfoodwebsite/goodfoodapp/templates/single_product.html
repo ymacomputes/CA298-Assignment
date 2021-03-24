@@ -11,4 +11,6 @@
     <p> Name {{ product.name }} <p/>
     <p> Description {{ product.description }} <p/>
     <p> <a href="/addbasket/{{ product.id }}">Add to basket {{ product.price }}</p>
+    <p>Category {{ product.category.name }}</p>
+    <img src="{{ product.picture.url }}" >
 {% endblock %}

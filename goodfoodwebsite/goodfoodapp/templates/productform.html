@@ -3,7 +3,7 @@
 {% block title %}Products{% endblock %}
 
 {% block content %}
-    <form action="/myform/" method="post">
+    <form action="/myform/" method="post" enctype="multipart/form-data">
     {% csrf_token %}
     {{ form.as_table }}
     <input type="submit" value="Submit">

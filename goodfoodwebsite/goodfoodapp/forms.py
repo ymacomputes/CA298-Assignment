@@ -1,14 +1,18 @@
-from django.forms import ModelForm
-from .models import Product, CaUser, Order
+from django.forms import ModelForm, ModelChoiceField
+from .models import Product, CaUser, Order, ProductCategory
 from django.contrib.auth.forms import UserCreationForm, AuthenticationForm
 from django.db import transaction
 from django import forms
 
+class CategoryChoiceField(ModelChoiceField):
+    def label_from_instance(self, obj):
+        return obj.name
 
 class ProductForm(ModelForm):
+    category = CategoryChoiceField(queryset=ProductCategory.objects.all())
     class Meta:
         model = Product
-        fields = ['name', 'description', 'price']
+        fields = ['name', 'description', 'price', 'picture', 'category']
 
 
 class CASignupForm(UserCreationForm):
