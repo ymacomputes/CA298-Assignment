@@ -9,6 +9,7 @@ from django.contrib.auth import login, logout
 from django.contrib.auth.decorators import login_required
 from .templates.permissions import admin_required
 from django.contrib.auth.views import LoginView
+from django.core import serializers
 
 
 def index(request):
@@ -21,7 +22,12 @@ def register(request):
 
 def all_products(request):
     all_p = Product.objects.all()
-    return render(request, 'all_products.html', {'products': all_p})
+    flag = request.GET.get('format', '')
+    if flag == "json":
+        serialised_products = serializers.serialize("json", all_p)
+        return HttpResponse(serialised_products, content_type="application/json")
+    else:
+        return render(request, 'all_products.html', {'products': all_p})
 
 
 def singleproduct(request, prodid):

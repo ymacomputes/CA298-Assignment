@@ -1,6 +1,30 @@
-from django.urls import path
+from django.urls import path, include
 from . import views
 from .forms import UserLoginForm
+from rest_framework import routers, serializers, viewsets
+from .models import CaUser, Product
+
+class UserSerializer(serializers.HyperlinkedModelSerializer):
+    class Meta:
+        model = CaUser
+        fields = ['url', 'username', 'email', 'is_staff']
+
+class ProductSerializer(serializers.HyperlinkedModelSerializer):
+    class Meta:
+        model = Product
+        fields = ['name', 'description', 'price']
+
+class ProductViewSet(viewsets.ModelViewSet):
+    queryset = Product.objects.all()
+    serializer_class = ProductSerializer
+
+class UserViewSet(viewsets.ModelViewSet):
+    queryset = CaUser.objects.all()
+    serializer_class = UserSerializer
+
+router = routers.DefaultRouter()
+router.register(r'users', UserViewSet)
+router.register(r'products', ProductViewSet)
 
 urlpatterns = [
     path('', views.index, name="index"),
@@ -15,5 +39,6 @@ urlpatterns = [
     path('addbasket/<int:prodid>', views.add_to_basket, name="add_to_basket"),
     path('basket/', views.get_basket, name="basket"),
     path('ordercomplete/', views.order_form, name="order_complete"),
-    path('orderform/', views.order_form, name="order_form")
+    path('orderform/', views.order_form, name="order_form"),
+    path('api/', include(router.urls))
 ]
