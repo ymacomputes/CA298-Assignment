@@ -3,6 +3,7 @@ from . import views
 from .forms import UserLoginForm
 from rest_framework import routers, serializers, viewsets
 from .models import CaUser, Product
+from rest_framework.authtoken.views import obtain_auth_token
 
 class UserSerializer(serializers.HyperlinkedModelSerializer):
     class Meta:
@@ -17,6 +18,8 @@ class ProductSerializer(serializers.HyperlinkedModelSerializer):
 class ProductViewSet(viewsets.ModelViewSet):
     queryset = Product.objects.all()
     serializer_class = ProductSerializer
+    authentication_classes = []
+    permission_classes = []
 
 class UserViewSet(viewsets.ModelViewSet):
     queryset = CaUser.objects.all()
@@ -40,5 +43,6 @@ urlpatterns = [
     path('basket/', views.get_basket, name="basket"),
     path('ordercomplete/', views.order_form, name="order_complete"),
     path('orderform/', views.order_form, name="order_form"),
-    path('api/', include(router.urls))
+    path('api/', include(router.urls)),
+    path('token/', obtain_auth_token, name="api_token_auth")
 ]
