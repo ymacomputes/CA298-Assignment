@@ -1,12 +1,14 @@
 {% extends "base.html" %}
 
-{% block title %}All Products{% endblock %}
+{% block title %}
+    All Products
+{% endblock %}
 
 {% block content %}
     {% for p in products %}
         <div>
-            Name <a href="/product/{{ p.id }}">{{ p.name }}</a> <br/>
-            Description {{ p.description }} <br/>
+            Name {{ p.name }}<br/>
+            Description {{ p.description }}<br/>
             Price {{ p.price }}
         </div>
     {% endfor %}

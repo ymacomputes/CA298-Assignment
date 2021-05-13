@@ -36,6 +36,11 @@
           <td>Total</td>
         </tr>
       </table>
+      <form id="checkout-form" method="POST", action=".">
+        <label for="shipping_addr">Shipping Address</label>
+        <input type="text" name="shipping_addr" placeholder="Shipping Address">
+        <button id="checkout-button" type="submit">Checkout</button>
+      </form>
     </div>
 
     <script>
@@ -99,7 +104,8 @@
       });
         //extract token from the response
       }, true)
-      
+
+
       function addToBasket(productId){
         if(window.token){
           fetch("http://localhost:8000/addbasket/"+productId+"?format=json",{
@@ -109,7 +115,10 @@
               'Content-Type': 'application/json',
               'Authorization': 'Token '+window.token
             }
-          }).then(response => response.json()).then(data => console.log(data));
+          }).then(function(response){
+            console.log(response)
+            return  response.json()
+          }).then(data=>console.log(data));
         }
         else{
           alert("Please log in to continue");
@@ -156,6 +165,27 @@
         showBasket();
       })
 
+
+      let checkoutbutton = document.getElementById("checkout-button");
+      checkoutbutton.addEventListener("submit", (event)=>{
+        event.preventDefault();
+        //get shipping addr value
+        sp_addr = document.getElementById("shipping_addr").value;
+        fetch("http://localhost:8000/checkout/?format=json", {
+          method:'POST',
+          headers:{
+            'Accept': 'application/json',
+            'Content-Type': 'application/json',
+            'Authorization': 'Token '+window.token
+          },
+          body:JSON.stringify( {shipping_addr:sp_addr}) //{username: hlep, password:Testing123456}
+        }).then(function(response){
+          console.log(response)
+          return response.json()
+        }).then(function(data){
+          console.log(data)
+        })
+      }, true);
     </script>
   </body>
 </html>

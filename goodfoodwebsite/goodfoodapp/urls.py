@@ -5,15 +5,18 @@ from rest_framework import routers, serializers, viewsets
 from .models import CaUser, Product
 from rest_framework.authtoken.views import obtain_auth_token
 
+
 class UserSerializer(serializers.HyperlinkedModelSerializer):
     class Meta:
         model = CaUser
         fields = ['url', 'username', 'email', 'is_staff']
 
+
 class ProductSerializer(serializers.HyperlinkedModelSerializer):
     class Meta:
         model = Product
         fields = ['id', 'name', 'description', 'price', 'picture']
+
 
 class ProductViewSet(viewsets.ModelViewSet):
     queryset = Product.objects.all()
@@ -21,9 +24,11 @@ class ProductViewSet(viewsets.ModelViewSet):
     authentication_classes = []
     permission_classes = []
 
+
 class UserViewSet(viewsets.ModelViewSet):
     queryset = CaUser.objects.all()
     serializer_class = UserSerializer
+
 
 router = routers.DefaultRouter()
 router.register(r'users', UserViewSet)
@@ -41,8 +46,8 @@ urlpatterns = [
     path('logout/', views.logout_view, name="logout"),
     path('addbasket/<int:prodid>', views.add_to_basket, name="add_to_basket"),
     path('basket/', views.get_basket, name="basket"),
-    path('ordercomplete/', views.order_form, name="order_complete"),
-    path('orderform/', views.order_form, name="order_form"),
+    path('basketremove/<int:sbi>', views.remove_from_basket, name="remove_basket"),
+    path('checkout/', views.order_form, name="checkout"),
     path('api/', include(router.urls)),
     path('token/', obtain_auth_token, name="api_token_auth")
 ]

@@ -7,7 +7,7 @@ from django.shortcuts import redirect
 from django.views.generic import CreateView
 from django.contrib.auth import login, logout
 from django.contrib.auth.decorators import login_required
-from .templates.permissions import admin_required
+from .permissions import admin_required
 from django.contrib.auth.views import LoginView
 from django.core import serializers
 from rest_framework.decorators import authentication_classes, permission_classes
@@ -17,6 +17,8 @@ from rest_framework.authtoken.models import Token
 import json
 from django.forms.models import model_to_dict
 from django.core.serializers import serialize
+from django.http import JsonResponse
+from django.views.decorators.csrf import csrf_exempt
 
 
 def index(request):
@@ -64,6 +66,7 @@ def productform(request):
     else:
         form = ProductForm()
     return render(request, 'productform.html', {'form': form})
+
 
 class CaUserSignupView(CreateView):
     model = CaUser
@@ -121,7 +124,7 @@ def add_to_basket(request, prodid):
         sbi.save()
     flag = request.GET.get('format', '')
     if flag == "json":
-        return HttpResponse({"status": "success"}, content_type="application/json")
+        return JsonResponse({"status": "success"})
     else:
         return render(request, 'single_product.html', {'product': product, 'added': True})
 
@@ -157,26 +160,39 @@ def remove_from_basket(request, sbi):
     return redirect('/basket')
 
 
-@login_required
+@authentication_classes([SessionAuthentication, BasicAuthentication])
+@permission_classes([IsAuthenticated])
+@csrf_exempt
 def order_form(request):
     user = request.user
+    if user.is_anonymous:
+        token = request.META.get('HTTP_AUTHORIZATION').split(" ")[1]
+        user = Token.objects.get(key=token).user
     shopping_basket = ShoppingBasket.objects.filter(user_id=user).first()
     if not shopping_basket:
         return redirect(request, '/')
     sbi = ShoppingBasketItems.objects.filter(basket_id=shopping_basket.id)
     if request.method == 'POST':
-        form = OrderForm\
-            (request.POST)
+        if not request.POST:
+            body_unicode = request.body.decode('utf-8')
+            body = json.loads(body_unicode)
+            form = OrderForm(body)
+        else:
+            form = OrderForm(request.POST)
         if form.is_valid():
             order = form.save(commit=False)
-            order.user_id = request.user
+            order.user_id = user
             order.save()
-        order_items = []
-        for basketitem in sbi:
-            order_item = OrderItems(order_id=order, product_id=basketitem.product, quantity=basketitem.quantity)
-            order_items.append(order_item)
+            order_items = []
+            for basketitem in sbi:
+                order_item = OrderItems(order_id=order, product_id=basketitem.product, quantity=basketitem.quantity)
+                order_items.append(order_item)
         shopping_basket.delete()
-        return render(request, 'ordercomplete.html', {'order': order, 'items': order_items})
+        flag = request.GET.get('format', '')
+        if flag == "json":
+            return JsonResponse({"status": "success"})
+        else:
+            return render(request, 'ordercomplete.html', {'order': order, 'items': order_items})
     else:
         form = OrderForm()
         return render(request, 'orderform.html', {'form': form, 'basket': shopping_basket, 'items': sbi})
