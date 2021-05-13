@@ -10,6 +10,9 @@ from django.contrib.auth.decorators import login_required
 from .templates.permissions import admin_required
 from django.contrib.auth.views import LoginView
 from django.core import serializers
+from rest_framework.decorators import authentication_classes, permission_classes, api_view
+from rest_framework.authentication import SessionAuthentication, BasicAuthentication, TokenAuthentication
+from rest_framework.permissions import IsAuthenticated
 
 
 def index(request):
@@ -85,9 +88,13 @@ def logout_view(request):
     return redirect('/')
 
 
-@login_required
+@authentication_classes([SessionAuthentication, BasicAuthentication])
+@permission_classes([IsAuthenticated])
 def add_to_basket(request, prodid):
     user = request.user
+    if user.is_anonymous:
+        token = request.META.get('HTTP_AUTHORIZATION').split(" ")[1]
+        user = Token.objects.get(key=token).user
     shopping_basket = ShoppingBasket.objects.filter(user_id=user).first()
     if not shopping_basket:
         shopping_basket = ShoppingBasket(user_id=user).save()
@@ -98,7 +105,11 @@ def add_to_basket(request, prodid):
     else:
         sbi.quantity = sbi.quantity+1
         sbi.save()
-    return render(request, 'single_product.html', {'product': product, 'added': True})
+    flag = request.GET.get('format', '')
+    if flag == "json":
+        return HttpResponse({"status": "success"}, content_type="application/json")
+    else:
+        return render(request, 'single_product.html', {'product': product, 'added': True})
 
 
 @login_required
