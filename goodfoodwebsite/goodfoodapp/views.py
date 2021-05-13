@@ -10,9 +10,13 @@ from django.contrib.auth.decorators import login_required
 from .templates.permissions import admin_required
 from django.contrib.auth.views import LoginView
 from django.core import serializers
-from rest_framework.decorators import authentication_classes, permission_classes, api_view
-from rest_framework.authentication import SessionAuthentication, BasicAuthentication, TokenAuthentication
+from rest_framework.decorators import authentication_classes, permission_classes
+from rest_framework.authentication import SessionAuthentication, BasicAuthentication
 from rest_framework.permissions import IsAuthenticated
+from rest_framework.authtoken.models import Token
+import json
+from django.forms.models import model_to_dict
+from django.core.serializers import serialize
 
 
 def index(request):
@@ -50,6 +54,16 @@ def myform(request):
         form = ProductForm()
         return render(request, 'productform.html', {'form': form})
 
+
+def productform(request):
+    if request.method == 'POST':
+        form = ProductForm(request.POST)
+        if form.is_valid():
+            new_product = form.save()
+            return render(request, 'productform.html', {'form': form})
+    else:
+        form = ProductForm()
+    return render(request, 'productform.html', {'form': form})
 
 class CaUserSignupView(CreateView):
     model = CaUser
@@ -112,14 +126,29 @@ def add_to_basket(request, prodid):
         return render(request, 'single_product.html', {'product': product, 'added': True})
 
 
-@login_required
+@authentication_classes([SessionAuthentication, BasicAuthentication])
+@permission_classes([IsAuthenticated])
 def get_basket(request):
     user = request.user
+    if user.is_anonymous:
+        token = request.META.get('HTTP_AUTHORIZATION').split(" ")[1]
+        user = Token.objects.get(key=token).user
     shopping_basket = ShoppingBasket.objects.filter(user_id=user).first()
     if not shopping_basket:
         shopping_basket = ShoppingBasket(user_id=user).save()
     sbi = ShoppingBasketItems.objects.filter(basket_id=shopping_basket.id)
-    return render(request, 'basket.html', {'basket': shopping_basket, 'items': sbi})
+    flag = request.GET.get('format', '')
+    if flag == "json":
+        basket_array = []
+        for basket_item in sbi:
+            tmp = {}
+            tmp['product'] = basket_item.product.name
+            tmp['price'] = float(basket_item.product.price)
+            tmp['quantity'] = int(basket_item.quantity)
+            basket_array.append(tmp)
+        return HttpResponse(json.dumps({'items': basket_array}), content_type="application/json")
+    else:
+        return render(request, 'basket.html', {'basket': shopping_basket, 'items': sbi})
 
 
 @login_required
