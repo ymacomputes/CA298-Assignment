@@ -26,6 +26,18 @@
       <input type="submit" value="login">
     </form>
 
+    <div id="shopping-basket-cont">
+      <button id="show-basket">Show Basket</button>
+      <table id="shopping-basket">
+        <tr>
+          <td>Name</td>
+          <td>Price</td>
+          <td>Quantity</td>
+          <td>Total</td>
+        </tr>
+      </table>
+    </div>
+
     <script>
       fetch("http://127.0.0.1:8000/api/products/?format=json")
       .then(response => response.json())
@@ -113,12 +125,36 @@
               'Content-Type': 'application/json',
               'Authorization': 'Token '+window.token
             }
-          }).then(response => response.json()).then(data => console.log(data));
+          }).then(response => response.json()).then(data => {
+            data['items'].forEach(element =>{
+              let table = document.getElementById("shopping-basket")
+              let newRow = document.createElement("tr")
+              table.appendChild(newRow)
+              let name = document.createElement("td") // <td> innerHTML </td>
+              name.innerHTML = element['product']
+              newRow.appendChild(name)
+              let price = document.createElement("td") // <td> innerHTML </td>
+              price.innerHTML = element['price']
+              newRow.appendChild(price)
+              let quantity = document.createElement("td") // <td> innerHTML </td>
+              quantity.innerHTML = element['quantity']
+              newRow.appendChild(quantity)
+              let total = document.createElement("td") // <td> innerHTML </td>
+              total.innerHTML = element['quantity']*element['price']
+              newRow.appendChild(total)
+            })
+          });
         }
         else{
           alert("Please log in to continue");
         }
       }
+
+      let showbb = document.getElementById("show-basket")
+      showbb.addEventListener("click", (event)=>{
+        event.preventDefault();
+        showBasket();
+      })
 
     </script>
   </body>
