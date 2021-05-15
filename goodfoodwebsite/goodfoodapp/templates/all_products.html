@@ -6,10 +6,22 @@
 
 {% block content %}
     {% for p in products %}
-        <div>
-            Name {{ p.name }}<br/>
-            Description {{ p.description }}<br/>
-            Price {{ p.price }}
+        <div class="container">
+            <div class="notification is-primary">
+                <div class="card">
+                    <div class="card-image">
+                        <figure class="image is -16by9">
+                            <img src="{{ p.picture.url }}" alt="{{ p.name }} image" />
+                        </figure>
+                    </div>
+                    <div class="media-content">
+                        <p class="title is-4"><a href="/product/{{ p.id }}">{{ p.name }}</a></p>
+                        <p class="subtitle is-6">{{ p.name }}</p>
+                        <p class="subtitle is-6">Euro {{ p.price }}</p>
+                    </div>
+                </div>
+            </div>
         </div>
+
     {% endfor %}
 {% endblock %}
