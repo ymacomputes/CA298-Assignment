@@ -10,6 +10,7 @@
     <p>Product description {{ product.description }}</p>
     <p>Product price {{ product.price }}</p>
     <p>Category {{ product.category.name }}</p>
+    <p> <a href="/addbasket/{{ product.id }}">Add to basket {{ product.price }}</a></p>
     <img src="{{ product.picture.url }}" >
 {% endblock %}
 

@@ -133,8 +133,11 @@ def add_to_basket(request, prodid):
 @permission_classes([IsAuthenticated])
 def get_basket(request):
     user = request.user
+    auth = request.META.get('HTTP_AUTHORIZATION')
+    if user is None and auth is None:
+        return redirect('/login')
     if user.is_anonymous:
-        token = request.META.get('HTTP_AUTHORIZATION').split(" ")[1]
+        token = auth.split(" ")[1]
         user = Token.objects.get(key=token).user
     shopping_basket = ShoppingBasket.objects.filter(user_id=user).first()
     if not shopping_basket:
