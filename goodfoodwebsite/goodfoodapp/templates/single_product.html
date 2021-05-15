@@ -5,12 +5,29 @@
 {% endblock %}
 
 
-{% block content %}
-    <p>Product name {{ product.name }}</p>
-    <p>Product description {{ product.description }}</p>
-    <p>Product price {{ product.price }}</p>
-    <p>Category {{ product.category.name }}</p>
-    <p> <a href="/addbasket/{{ product.id }}">Add to basket {{ product.price }}</a></p>
-    <img src="{{ product.picture.url }}" >
+{% block content%}
+    <div class="container">
+            <div class="notification is-primary">
+                <div class="card">
+                    <div class="card-image">
+                        <figure class="image is -16by9">
+                            <img src="{{ product.picture.url }}" alt="{{ p.name }} image" />
+                        </figure>
+                    </div>
+                    <div class="media-content">
+                        <p class="title is-4">Name: {{ product.name }}</p>
+                    </div>
+                    <div class="content">
+                        <p>Category: {{ product.category.name }}</p>
+                        <p>Price: Euro {{ product.price }}</p>
+                        <p>Description: {{ product.description }}</p>
+                        <footer class="card-footer">
+                            <p class="card-footer-item button is-light"><a href="/addbasket/{{ product.id }}">Add to basket Euro {{ product.price }}</a></p>
+                        </footer>
+                    </div>
+                </div>
+            </div>
+        </div>
+
 {% endblock %}
 
