@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title><%= title %></title>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bulma@0.9.2/css/bulma.min.css">
+    <link rel='stylesheet' href='/stylesheets/style.css'/>
+    <link rel="shortcut icon" href="#">
+</head>
+<body>
+<%- include('./partials/nav'); %>
+<div id="products" class="container"></div>
+
+<script>
+    fetch("http://127.0.0.1:8000/api/products/?format=json")
+        .then(response => response.json())
+        .then(data => {
+            data.forEach(product => {
+                //for each row in the data:
+                //create a new <tr> element
+                let products = document.getElementById("products")
+                let productCard = document.createElement("div")
+                productCard.innerHTML = `
+                  <div class="container">
+                    <div class="notification is-primary">
+                        <div class="card">
+                            <div class="card-image">
+                                <figure class="image is-16by9">
+                                    <img src="${ product.picture }" alt="${ product.name } image" />
+                                </figure>
+                            </div>
+                            <div class="media-content">
+                                <p class="title is-4"><a href="/product/${ product.id }">${ product.name }</a></p>
+                                <p class="subtitle is-6">Euro ${ product.price }</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                `
+                products.appendChild(productCard)
+            })
+        });
+</script>
+</body>
+</html>

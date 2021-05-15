@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title><%= title %></title>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bulma@0.9.2/css/bulma.min.css">
+    <link rel='stylesheet' href='/stylesheets/style.css'/>
+    <link rel="shortcut icon" href="#">
+</head>
+<body>
+
+<%- include('./partials/nav'); %>
+
+<div id="product" class="container"></div>
+<script>
+    let productId = "<%= productId %>";
+    let cookies = document.cookie.split(";").map(elem => [...elem.split('=')])
+
+    function addItemToBasket(e) {
+        e.preventDefault()
+        fetch(`http://127.0.0.1:8000/addbasket/${productId}`, {
+            headers: {
+                Authorization: `Token ${cookies.filter(cookie => cookie[0] === "token")[0][1]}`
+            }
+        })
+    }
+
+    fetch(`http://127.0.0.1:8000/api/products/${productId}/?format=json`)
+        .then(response => response.json())
+        .then(product => {
+            let productContainer = document.getElementById("product")
+            let productCard = document.createElement("div")
+            productCard.innerHTML = `
+                <div class="notification is-primary">
+                    <div class="card">
+                        <div class="card-image">
+                            <figure class="image is -16by9">
+                                <img src="${ product.picture }" alt="${ product.name } image" />
+                            </figure>
+                        </div>
+                        <div class="media-content">
+                            <p class="title is-4">Name: ${ product.name }</p>
+                        </div>
+                        <div class="content">
+                            <p>Category: ${ product.name }</p>
+                            <p>Price: Euro ${ product.price }</p>
+                            <p>Description: ${ product.description }</p>
+                            <footer class="card-footer">
+                                <p class="card-footer-item button is-light">
+                                    <a id = "basket-button" href="/addbasket/${ product.id }">Add to basket Euro ${ product.price }</a>
+                                </p>
+                            </footer>
+                        </div>
+                    </div>
+                </div>
+            `
+            productContainer.append(productCard)
+            let productAddButton = document.getElementById("basket-button")
+            productAddButton.onclick = addItemToBasket
+        });
+</script>
+</body>
+</html>

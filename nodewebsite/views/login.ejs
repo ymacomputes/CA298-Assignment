@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title><%= title %></title>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bulma@0.9.2/css/bulma.min.css">
+    <link rel='stylesheet' href='/stylesheets/style.css'/>
+    <link rel="shortcut icon" href="#">
+</head>
+<body>
+
+<%- include('./partials/nav'); %>
+
+<form id="login-form" method="POST" , action=".">
+    <label for="username">Username</label>
+    <input id="form-username" name="username" type="text" placeholder="Your Username">
+    <label for="password">Password</label>
+    <input id="form-password" name="password" type="password" placeholder="Your Password">
+    <input type="submit" value="login">
+</form>
+
+<script>
+    //event listener for login form
+    let loginform = document.getElementById("login-form")
+    loginform.addEventListener("submit", (event) => {
+        event.preventDefault();
+        //get data out of form
+        let user = document.getElementById("form-username").value
+        let pass = document.getElementById("form-password").value
+        //build post request to /token/
+        fetch("http://localhost:8000/token/", {
+            method: 'POST',
+            headers: {
+                'Accept': 'application/json',
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({username: user, password: pass})
+        }).then(response => response.json()).then(function (data) {
+            console.log(data)
+            document.cookie = `token=${data['token']}`
+        });
+        //extract token from the response
+    }, true)
+
+</script>
+</body>
+</html>

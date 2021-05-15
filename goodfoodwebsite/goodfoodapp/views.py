@@ -115,7 +115,7 @@ def add_to_basket(request, prodid):
     shopping_basket = ShoppingBasket.objects.filter(user_id=user).first()
     if not shopping_basket:
         shopping_basket = ShoppingBasket(user_id=user).save()
-    product = Product.objects.get(pk=prodid)
+    product = Product.objects.get(id=prodid)
     sbi = ShoppingBasketItems.objects.filter(basket_id=shopping_basket.id, product_id=product.id).first()
     if sbi is None:
         sbi = ShoppingBasketItems(basket_id=shopping_basket, product_id=product.id).save()
@@ -184,11 +184,12 @@ def order_form(request):
             form = OrderForm(request.POST)
         if form.is_valid():
             order = form.save(commit=False)
+            uid = CaUser.objects.get(username=user).id
             order.user_id = user
             order.save()
             order_items = []
             for basketitem in sbi:
-                order_item = OrderItems(order_id=order, product_id=basketitem.product, quantity=basketitem.quantity)
+                order_item = OrderItems(id=order, product_id=basketitem.product, quantity=basketitem.quantity)
                 order_items.append(order_item)
         shopping_basket.delete()
         flag = request.GET.get('format', '')

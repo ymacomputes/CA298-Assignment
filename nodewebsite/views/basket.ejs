@@ -1,0 +1,105 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title><%= title %></title>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bulma@0.9.2/css/bulma.min.css">
+    <link rel='stylesheet' href='/stylesheets/style.css'/>
+    <link rel="shortcut icon" href="#">
+</head>
+<body>
+<%- include('./partials/nav'); %>
+
+<div id="shopping-basket-cont">
+    <table class = "table">
+        <thead>
+            <tr>
+                <th>Name</th>
+                <th>Price</th>
+                <th>Quantity</th>
+                <th>Total</th>
+            </tr>
+        </thead>
+        <tbody id="shopping-basket">
+
+        </tbody>
+    </table>
+    <form id="checkout-form">
+        <label for="shipping_addr">Shipping Address</label>
+        <input type="text" id="shipping_addr" name="shipping_addr" placeholder="Shipping Address">
+        <input id="checkout-button" type="submit" value = "submit"/>
+    </form>
+</div>
+
+<script>
+    let cookies = document.cookie.split("; ").map(elem => [...elem.split('=')])
+    let token = cookies.filter(cookie => cookie[0] === "token")[0][1]
+        if (token) {
+            fetch("http://localhost:8000/basket/?format=json", {
+                method: 'GET',
+                headers: {
+                    'Accept': 'application/json',
+                    'Content-Type': 'application/json',
+                    'Authorization': `Token ${token}`
+                }
+            }).then(response => response.json()).then(data => {
+                data['items'].forEach(element => {
+                    let table = document.getElementById("shopping-basket")
+                    let newRow = document.createElement("tr")
+                    newRow.innerHTML = `
+                        <td>
+                            ${element['product']}
+                        </td>
+                        <td>
+                            ${element['price']}
+                        </td>
+                        <td>
+                            ${element['quantity']}
+                        </td>
+                        <td>
+                            ${element['quantity'] * element['price']}
+                        </td>
+                    `
+                    table.appendChild(newRow)
+                })
+            });
+        } else {
+            window.location("/login");
+        }
+    function addToBasket(productId) {
+        if (token) {
+            fetch(`http://localhost:8000/addbasket/${productId}?format=json`, {
+                method: 'GET',
+                headers: {
+                    'Accept': 'application/json',
+                    'Content-Type': 'application/json',
+                    Authorization: `Token ${token}`
+                }
+            }).then(function (response) {
+                console.log(response)
+                return response.json()
+            }).then(data => console.log(data));
+        } else {
+            alert("Please log in to continue");
+        }
+    }
+
+    document.getElementById("checkout-form").addEventListener("submit", (event) => {
+        event.preventDefault();
+        //get shipping addr value
+        const sp_addr = document.getElementById("shipping_addr").value
+        fetch("http://localhost:8000/basket/?format=json", {
+            method: 'GET',
+            headers: {
+                'Accept': 'application/json',
+                'Content-Type': 'application/json',
+                'Authorization': `Token ${token}`
+            }
+        }).then(response => response.json()).then(data => {
+
+            alert(`Hurrah, you bought: ${data['items'].map(elem => elem['product']).join(", ")}. shipped to ${sp_addr}`)
+
+        });
+    }, true);
+</script>
+</body>
+</html>
