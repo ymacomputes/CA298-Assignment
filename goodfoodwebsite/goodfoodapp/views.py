@@ -154,7 +154,7 @@ def get_basket(request):
             basket_array.append(tmp)
         return HttpResponse(json.dumps({'items': basket_array}), content_type="application/json")
     else:
-        return render(request, 'basket.html', {'basket': shopping_basket, 'items': sbi})
+        return render(request, 'basket.html', {'basket': shopping_basket, 'items': sbi, 'user': user})
 
 
 @login_required

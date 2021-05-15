@@ -5,23 +5,20 @@
 {% endblock %}
 
 {% block content %}
-    <div>Shopping Basket</div>
-        <button>
-            X
-        </button>
+    <div>{{ user }}'s Shopping Basket</div>
     {% if not items %}
         <p>Your basket is empty</p>
     {% else %}
-        <table>
+        <table class="table">
             <thead>
                 <tr>
-                    <td>Item</td>
-                    <td>Price</td>
-                    <td>Quantity</td>
-                    <td>Total</td>
-                    <td></td>
+                    <th>Item</th>
+                    <th>Price</th>
+                    <th>Quantity</th>
+                    <th>Total</th>
+                    <th></th>
                 </tr>
-            </thead
+            </thead>
             <tbody>
                 {% for i in items %}
                     <tr>
@@ -34,6 +31,6 @@
                 {% endfor %}
             </tbody>
         </table>
-        <a href="/addbasket/{{ product.id }}">Proceed to checkout</a>
+        <a href="/orderform">Proceed to checkout</a>
     {% endif %}
 {% endblock %}
